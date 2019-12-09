@@ -1,0 +1,76 @@
+C51 COMPILER V9.01   MAIN                                                                  12/09/2019 10:20:01 PAGE 1   
+
+
+C51 COMPILER V9.01, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN main.OBJ
+COMPILER INVOKED BY: D:\C51\BIN\C51.EXE main.c BROWSE DEBUG OBJECTEXTEND TABS(2)
+
+line level    source
+
+   1          #include"reg51.h"
+   2          #include "show.h"
+   3          #include"temp.h"
+   4          #include"moto.h"
+   5          #include"import.h"
+   6          
+   7          u16 i,PWM;
+   8          int set_temp=15;
+   9          int temp0;  
+  10          void time0init()
+  11          {
+  12   1        TMOD=0x01|TMOD;
+  13   1        TH0=0xfc; //定时1ms
+  14   1        TL0=0x18;
+  15   1        ET0=1;
+  16   1        EA=1;
+  17   1        TR0=1;
+  18   1      }
+  19          
+  20          void  main()
+  21          {
+  22   1         set_temp=set_initnumber();//输入目标温度
+  23   1         time0init();//定时器初始化
+  24   1           while(1)
+  25   1         {      
+  26   2            PWM=pwm_control(set_temp);//控制PWM输出
+  27   2            temp0=Ds18b20ReadTemp();//实际温度
+  28   2            datapros(temp0);   //数据处理函数 
+  29   2            DigDisplay();//数码管显示函数 
+  30   2          }
+  31   1      
+  32   1      }
+  33           void time0 ()interrupt 1     
+  34          {
+  35   1         
+  36   1            
+  37   1          TH0=0xfc; //定时1ms
+  38   1          TL0=0x18;
+  39   1        i++;
+  40   1           AIN1=1;
+  41   1           AIN2=0;
+  42   1          if(i>=10)
+  43   1            i=0;
+  44   1        if(i<PWM)
+  45   1          pwm=1;
+  46   1        else
+  47   1          pwm=0;
+  48   1        
+  49   1      }
+  50          
+  51          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    111    ----
+C51 COMPILER V9.01   MAIN                                                                  12/09/2019 10:20:01 PAGE 2   
+
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      8    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

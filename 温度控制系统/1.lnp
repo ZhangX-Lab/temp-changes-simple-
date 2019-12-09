@@ -1,0 +1,7 @@
+"DS18B20.obj",
+"main.obj",
+"moto.obj",
+"show.obj",
+"import.obj" 
+TO "1" 
+RAMSIZE(256) 

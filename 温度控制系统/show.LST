@@ -1,0 +1,118 @@
+C51 COMPILER V9.01   SHOW                                                                  12/09/2019 10:20:02 PAGE 1   
+
+
+C51 COMPILER V9.01, COMPILATION OF MODULE SHOW
+OBJECT MODULE PLACED IN show.OBJ
+COMPILER INVOKED BY: D:\C51\BIN\C51.EXE show.c BROWSE DEBUG OBJECTEXTEND TABS(2)
+
+line level    source
+
+   1          #include"show.h"
+   2          
+   3          char num=0;
+   4          u8 DisplayData[8];
+   5          u8 code smgduan[10]={0x3f,0x06,0x5b,0x4f,0x66,0x6d,0x7d,0x07,0x7f,0x6f};
+   6          u8 code smgduan1[10]={0xbf,0x86,0xdb,0xcf,0xe6,0xed,0xfd,0x87,0xff,0xef};
+   7          
+   8          void delay(u16 i)
+   9          {
+  10   1        while(i--); 
+  11   1      }
+  12          
+  13          
+  14          void datapros(int temp)    
+  15          {
+  16   1            
+  17   1          float tp;  
+  18   1        if(temp< 0)       //当温度值为负数
+  19   1          {
+  20   2          DisplayData[0] = 0x40;    //   -
+  21   2          //因为读取的温度是实际温度的补码，所以减1，再取反求出原码
+  22   2          temp=temp-1;
+  23   2          temp=~temp;
+  24   2          tp=temp;
+  25   2          temp=tp*0.0625*100+0.5; 
+  26   2          //留两个小数点就*100，+0.5是四舍五入，因为C语言浮点数转换为整型的时候把小数点
+  27   2          //后面的数自动去掉，不管是否大于0.5，而+0.5之后大于0.5的就是进1了，小于0.5的就
+  28   2          //算加上0.5，还是在小数点后面。
+  29   2       
+  30   2          }
+  31   1        else
+  32   1          {     
+  33   2          DisplayData[0] = 0x00;
+  34   2          tp=temp;//因为数据处理有小数点所以将温度赋给一个浮点型变量
+  35   2          //如果温度是正的那么，那么正数的原码就是补码它本身
+  36   2          temp=tp*0.0625*100+0.5; 
+  37   2          //留两个小数点就*100，+0.5是四舍五入，因为C语言浮点数转换为整型的时候把小数点
+  38   2          //后面的数自动去掉，不管是否大于0.5，而+0.5之后大于0.5的就是进1了，小于0.5的就
+  39   2          //算加上0.5，还是在小数点后面。
+  40   2        }
+  41   1        DisplayData[1] = smgduan[temp % 10000 / 1000];
+  42   1        DisplayData[2] = smgduan1[temp % 1000 / 100];
+  43   1        DisplayData[3] = smgduan[temp %  100 / 10];
+  44   1        DisplayData[4] = smgduan[temp %  10 / 1];
+  45   1      
+  46   1      }
+  47          
+  48          
+  49          
+  50          void DigDisplay()
+  51          {
+  52   1        u8 i;
+  53   1        u8 sum;
+  54   1        sum=set_initnumber();
+  55   1        DisplayData[6]=smgduan[sum/10];
+C51 COMPILER V9.01   SHOW                                                                  12/09/2019 10:20:02 PAGE 2   
+
+  56   1        DisplayData[7]=smgduan[sum%10];
+  57   1        for(i=0;i<8;i++)
+  58   1        {
+  59   2          switch(i)  //位选，选择点亮的数码管，
+  60   2          {
+  61   3             case(0):
+  62   3              LSA=1;LSB=1;LSC=1; break;//显示第0位
+  63   3            case(1):
+  64   3              LSA=0;LSB=1;LSC=1; break;//显示第1位
+  65   3            case(2):
+  66   3              LSA=1;LSB=0;LSC=1; break;//显示第2位
+  67   3            case(3):  
+  68   3              LSA=0;LSB=0;LSC=1; break;//显示第3位
+  69   3            case(4):
+  70   3              LSA=1;LSB=1;LSC=0; break;//显示第4位
+  71   3            case(5):
+  72   3              LSA=0;LSB=1;LSC=0; break;//显示第5位
+  73   3            case(6):
+  74   3              LSA=1;LSB=0;LSC=0; break;//显示第6位
+  75   3            case(7):
+  76   3              LSA=0;LSB=0;LSC=0; break;//显示第7位  
+  77   3          }
+  78   2          P0=DisplayData[i];//发送数据
+  79   2          delay(100); //间隔一段时间扫描  
+  80   2          P0=0x00;//消隐
+  81   2        }   
+  82   1      }
+  83          
+  84          
+  85          
+  86          
+  87          
+  88          
+  89          
+  90          
+  91          
+  92          
+  93          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    365    ----
+   CONSTANT SIZE    =     20    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      9       4
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
